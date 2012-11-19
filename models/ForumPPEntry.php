@@ -2,7 +2,7 @@
 
 /*
  * this class allows the retrieval and handling of forum-entrys
- * @author Till Glöggler <tgloeggl@uos.de>
+ * @author Till GlÃ¶ggler <tgloeggl@uos.de>
  */
 
 class ForumPPEntry {
@@ -83,7 +83,6 @@ class ForumPPEntry {
         return str_replace('[/quote]', '', preg_replace("/\[quote=.*\]/U", "", $description));
     }
 
-
     /**
      * calls Stud.IP's kill_format and additionally removes any found smiley-tag
      * 
@@ -92,20 +91,41 @@ class ForumPPEntry {
      */
     static function killFormat($text)
     {
-        
         $text = kill_format($text);
         
         // find stuff which is enclosed between to colons
-        preg_match('/:.*:/U', $text, $matches);
+        preg_match_all('/:(.*):/U', $text, $matches);
         
         // remove the match if it is a smiley
-        foreach ($matches as $match) {
-            if (Smiley::getByName($match) || Smiley::getByShort($match)) {
+        foreach ($matches[0] as $match) {
+            if (self::findSmileyByNameOrShort($match)) {
+                $text = str_replace($match, '', $text);
+            }
+        }
+        foreach ($matches[1] as $match) {
+            if (self::findSmileyByNameOrShort($match)) {
                 $text = str_replace($match, '', $text);
             }
         }
         
         return $text;
+    }
+    
+    /**
+     * Checks if the given name corresponds to a smiley name or short name
+     * 
+     * @access public
+     * @static
+     * @param string $name Smiley name or short name
+     * @return boolean 
+     */
+    static function findSmileyByNameOrShort($name)
+    {
+        $query = "SELECT COUNT(*) FROM smiley WHERE smiley_name = ? OR short_name = ?";
+        $statement = DBManager::get()->prepare($query);
+        $statement->execute(array($name, $name));
+        $result = $statement->fetch();
+        return $result[0] > 0;
     }
 
     /**
@@ -801,7 +821,7 @@ class ForumPPEntry {
         if ($stmt->fetchColumn() == 0) {
             $stmt = DBManager::get()->prepare("INSERT INTO forumpp_entries
                 (topic_id, seminar_id, name, mkdate, chdate, lft, rgt, depth)
-                VALUES (?, ?, 'Übersicht', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0, 1, 0)");
+                VALUES (?, ?, 'Ãœbersicht', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0, 1, 0)");
             $stmt->execute(array($seminar_id, $seminar_id));
         }
 
