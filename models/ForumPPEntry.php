@@ -2,7 +2,7 @@
 
 /*
  * this class allows the retrieval and handling of forum-entrys
- * @author Till GlÃ¶ggler <tgloeggl@uos.de>
+ * @author Till Glöggler <tgloeggl@uos.de>
  */
 
 class ForumPPEntry {
@@ -821,7 +821,7 @@ class ForumPPEntry {
         if ($stmt->fetchColumn() == 0) {
             $stmt = DBManager::get()->prepare("INSERT INTO forumpp_entries
                 (topic_id, seminar_id, name, mkdate, chdate, lft, rgt, depth)
-                VALUES (?, ?, 'Ãœbersicht', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0, 1, 0)");
+                VALUES (?, ?, 'Übersicht', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0, 1, 0)");
             $stmt->execute(array($seminar_id, $seminar_id));
         }
 
