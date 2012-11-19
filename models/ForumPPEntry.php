@@ -104,7 +104,7 @@ class ForumPPEntry {
         }
         foreach ($matches[1] as $match) {
             if (self::findSmileyByNameOrShort($match)) {
-                $text = str_replace($match, '', $text);
+                $text = str_replace(':'.$match.':', '', $text);
             }
         }
         
